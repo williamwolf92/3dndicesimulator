@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Tirador de Dados 3D</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #f5efe6;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Zona superior: caja de dados */
+  #dice-box-wrapper {
+    position: relative;
+    flex: 1;
+    background-color: #f7f1e8;
+    overflow: hidden;
+  }
+
+  #dice-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #dice-box canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Panel de resultados */
+  #result-panel {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 14px;
+    padding: 10px 24px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 5;
+    pointer-events: none;
+    width: 70%;
+  }
+
+  #result-total {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2b2b2b;
+  }
+
+  #result-detail {
+    font-size: 13px;
+    color: #6b6b6b;
+    margin-top: 4px;
+    word-break: break-word;
+  }
+
+  #empty-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #c9bfae;
+    font-size: 18px;
+    text-align: center;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Menú inferior */
+  #control-panel {
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-top: 1px solid #e6ddcf;
+    padding: 12px 14px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  }
+
+  #dice-selectors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+
+  .die-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background-color: #faf6ef;
+    border-radius: 12px;
+    padding: 8px 4px;
+    border: 1px solid #efe7d8;
+  }
+
+  .die-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3a3a3a;
+  }
+
+  .die-counter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .counter-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background-color: #2b2b2b;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .counter-btn:active {
+    background-color: #555555;
+  }
+
+  .die-count {
+    width: 22px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2b2b2b;
+  }
+
+  #extra-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .extra-btn {
+    border: 1px solid #efe7d8;
+    background-color: #faf6ef;
+    color: #3a3a3a;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .extra-btn:active {
+    background-color: #e0d5c0;
+  }
+
+  #action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .action-btn {
+    flex: 1;
+    padding: 14px 0;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  #roll-btn {
+    background-color: #2b2b2b;
+    color: #ffffff;
+  }
+
+  #roll-btn:active {
+    background-color: #444444;
+  }
+
+  #clear-btn {
+    background-color: #efe7d8;
+    color: #3a3a3a;
+  }
+
+  #clear-btn:active {
+    background-color: #e0d5c0;
+  }
+
+  #d100-btn {
+    background-color: #5c3d1e;
+    color: #ffffff;
+  }
+
+  #d100-btn:active {
+    background-color: #7a5230;
+  }
+
+  /* ── Floating config buttons ─────────────────────────── */
+  #float-buttons {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .float-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .float-btn:active {
+    background-color: rgba(224, 213, 195, 0.95);
+  }
+
+  /* ── Modal base ──────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.42);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal-box {
+    background-color: #faf6ef;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(24px);
+    transition: transform 0.22s ease;
+  }
+
+  .modal-overlay.open .modal-box {
+    transform: translateY(0);
+  }
+
+  .modal-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #efe7d8;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2b2b2b;
+  }
+
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background-color: #e8e0d4;
+    color: #3a3a3a;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  .modal-close:active {
+    background-color: #d5cab8;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 18px 20px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  }
+
+  /* ── Color modal ─────────────────────────────────────── */
+  #color-swatch-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  #color-swatch-label-wrap {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    cursor: pointer;
+  }
+
+  #color-swatch {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 3px solid rgba(0,0,0,0.1);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    transition: background-color 0.15s;
+  }
+
+  #color-picker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+
+  #color-hex-label {
+    font-size: 12px;
+    color: #7a6e62;
+    font-family: monospace;
+  }
+
+  #color-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .color-preset {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2.5px solid transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.22);
+    transition: transform 0.1s, border-color 0.12s, box-shadow 0.12s;
+  }
+
+  .color-preset:active {
+    transform: scale(0.87);
+  }
+
+  .color-preset.active {
+    border-color: #2b2b2b;
+    box-shadow: 0 0 0 2px #faf6ef, 0 0 0 4px #2b2b2b;
+  }
+
+  /* ── Physics modal ───────────────────────────────────── */
+  .param-row {
+    margin-bottom: 22px;
+  }
+
+  .param-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .param-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .param-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3a3a3a;
+  }
+
+  .param-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #5c3d1e;
+    background-color: #efe7d8;
+    padding: 3px 10px;
+    border-radius: 8px;
+    min-width: 72px;
+    text-align: center;
+  }
+
+  .param-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .param-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #2b2b2b;
+    cursor: pointer;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+  }
+
+  .param-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #2b2b2b;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+  }
+
+  .param-ticks {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 12px 0;
+  }
+
+  .param-tick {
+    font-size: 9px;
+    color: #9b8f7e;
+    text-align: center;
+    flex: 1;
+  }
+
+  .param-tick:first-child { text-align: left; }
+  .param-tick:last-child  { text-align: right; }
+</style>
+</head>
+<body>
+  <div id="app">
+    <div id="dice-box-wrapper">
+      <div id="dice-box"></div>
+      <div id="empty-message">Choose your dices and tap "Roll"</div>
+      <div id="result-panel" style="display:none;">
+        <div id="result-total"></div>
+        <div id="result-detail"></div>
+      </div>
+
+      <!-- Floating config buttons -->
+      <div id="float-buttons">
+        <button class="float-btn" id="color-btn" title="Dice Color">🎨</button>
+        <button class="float-btn" id="physics-btn" title="Physics">⚙️</button>
+      </div>
+    </div>
+
+    <div id="control-panel">
+      <div id="dice-selectors">
+        <div class="die-selector" data-die="4">
+          <div class="die-label">d4</div>
+          <div class="die-counter">
+            <button class="counter-btn minus">-</button>
+            <div class="die-count">0</div>
+            <button class="counter-btn plus">+</button>
+          </div>
+        </div>
+        <div class="die-selector" data-die="6">
+          <div class="die-label">d6</div>
+          <div class="die-counter">
+            <button class="counter-btn minus">-</button>
+            <div class="die-count">0</div>
+            <button class="counter-btn plus">+</button>
+          </div>
+        </div>
+        <div class="die-selector" data-die="8">
+          <div class="die-label">d8</div>
+          <div class="die-counter">
+            <button class="counter-btn minus">-</button>
+            <div class="die-count">0</div>
+            <button class="counter-btn plus">+</button>
+          </div>
+        </div>
+        <div class="die-selector" data-die="10">
+          <div class="die-label">d10</div>
+          <div class="die-counter">
+            <button class="counter-btn minus">-</button>
+            <div class="die-count">0</div>
+            <button class="counter-btn plus">+</button>
+          </div>
+        </div>
+        <div class="die-selector" data-die="12">
+          <div class="die-label">d12</div>
+          <div class="die-counter">
+            <button class="counter-btn minus">-</button>
+            <div class="die-count">0</div>
+            <button class="counter-btn plus">+</button>
+          </div>
+        </div>
+        <div class="die-selector" data-die="20">
+          <div class="die-label">d20</div>
+          <div class="die-counter">
+            <button class="counter-btn minus">-</button>
+            <div class="die-count">0</div>
+            <button class="counter-btn plus">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="extra-row">
+        <div id="modifier-selector" class="die-selector">
+          <div class="die-label">Mod.</div>
+          <div class="die-counter">
+            <button class="counter-btn minus" id="mod-minus">-</button>
+            <div class="die-count" id="mod-value">0</div>
+            <button class="counter-btn plus" id="mod-plus">+</button>
+          </div>
+        </div>
+        <button id="advantage-btn" class="extra-btn">Advantage</button>
+        <button id="disadvantage-btn" class="extra-btn">Disadvantage</button>
+      </div>
+
+      <div id="action-buttons">
+        <button id="clear-btn" class="action-btn">Clear</button>
+        <button id="roll-btn" class="action-btn">Roll</button>
+        <button id="d100-btn" class="action-btn">d100</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Color Modal ─────────────────────────────────────────── -->
+  <div class="modal-overlay" id="color-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">🎨 Dice Color</span>
+        <button class="modal-close" data-modal="color-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="color-swatch-wrapper">
+          <div id="color-swatch-label-wrap">
+            <div id="color-swatch"></div>
+            <input type="color" id="color-picker" value="#0070c0">
+          </div>
+          <div id="color-hex-label">#0070c0</div>
+        </div>
+        <div id="color-presets">
+          <button class="color-preset" style="background:#000000" data-color="#000000" title="Negro"></button>
+          <button class="color-preset" style="background:#ffffff" data-color="#ffffff" title="Blanco"></button>
+          <button class="color-preset" style="background:#c00000" data-color="#c00000" title="Marrón"></button>
+          <button class="color-preset" style="background:#ff0000" data-color="#ff0000" title="Rojo"></button>
+          <button class="color-preset" style="background:#ffc000" data-color="#ffc000" title="Dorado"></button>
+          <button class="color-preset" style="background:#ffff00" data-color="#ffff00" title="Amarillo"></button>
+          <button class="color-preset" style="background:#92d050" data-color="#92d050" title="Verde Claro"></button>
+          <button class="color-preset" style="background:#00b050" data-color="#00b050" title="Verde Oscuro"></button>
+          <button class="color-preset" style="background:#00b0f0" data-color="#00b0f0" title="Cyan"></button>
+          <button class="color-preset" style="background:#0070c0" data-color="#0070c0" title="Azul Real"></button>
+          <button class="color-preset" style="background:#002060" data-color="#002060" title="Azul Oscuro"></button>
+          <button class="color-preset" style="background:#7030a0" data-color="#7030a0" title="Púrpura"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Physics Modal ───────────────────────────────────────── -->
+  <div class="modal-overlay" id="physics-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">⚙️ Physics</span>
+        <button class="modal-close" data-modal="physics-modal">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="param-row">
+          <div class="param-header">
+            <span class="param-label">Size</span>
+            <span class="param-value" id="scale-value">Large</span>
+          </div>
+          <input type="range" class="param-slider" id="scale-slider" min="0" max="5" step="1" value="3">
+          <div class="param-ticks" id="scale-ticks"></div>
+        </div>
+
+        <div class="param-row">
+          <div class="param-header">
+            <span class="param-label">Gravity</span>
+            <span class="param-value" id="gravity-value">Normal</span>
+          </div>
+          <input type="range" class="param-slider" id="gravity-slider" min="0" max="2" step="1" value="2">
+          <div class="param-ticks" id="gravity-ticks"></div>
+        </div>
+
+        <div class="param-row">
+          <div class="param-header">
+            <span class="param-label">Friction</span>
+            <span class="param-value" id="friction-value">On</span>
+          </div>
+          <input type="range" class="param-slider" id="friction-slider" min="0" max="1" step="1" value="1">
+          <div class="param-ticks" id="friction-ticks"></div>
+        </div>
+
+        <div class="param-row">
+          <div class="param-header">
+            <span class="param-label">Bounce</span>
+            <span class="param-value" id="restitution-value">Normal</span>
+          </div>
+          <input type="range" class="param-slider" id="restitution-slider" min="0" max="2" step="1" value="1">
+          <div class="param-ticks" id="restitution-ticks"></div>
+        </div>
+
+        <div class="param-row">
+          <div class="param-header">
+            <span class="param-label">Lighting</span>
+            <span class="param-value" id="light-value">Normal</span>
+          </div>
+          <input type="range" class="param-slider" id="light-slider" min="0" max="2" step="1" value="1">
+          <div class="param-ticks" id="light-ticks"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import DiceBox from "https://unpkg.com/@3d-dice/dice-box@1.1.4/dist/dice-box.es.min.js";
+
+    const emptyMessage    = document.getElementById("empty-message");
+    const resultPanel     = document.getElementById("result-panel");
+    const resultTotal     = document.getElementById("result-total");
+    const resultDetail    = document.getElementById("result-detail");
+    const rollBtn         = document.getElementById("roll-btn");
+    const clearBtn        = document.getElementById("clear-btn");
+    const d100Btn         = document.getElementById("d100-btn");
+
+    let pendingMode     = "normal";
+    let pendingModifier = 0;
+
+    // ── Step definitions ──────────────────────────────────────────────────────
+    const SCALE_STEPS = [
+      { label: "Tiny",       value: 2  },
+      { label: "Small",      value: 4  },
+      { label: "Medium",     value: 6  },
+      { label: "Large",      value: 8  },
+      { label: "Huge",       value: 10 },
+      { label: "Gargantuan", value: 15 },
+    ];
+    const GRAVITY_STEPS = [
+      { label: "Zero",   value: 0  },
+      { label: "Soft",   value: 1  },
+      { label: "Normal", value: 10 },
+    ];
+    const FRICTION_STEPS = [
+      { label: "Off", value: 1 },
+      { label: "On",  value: 0 },
+    ];
+    const RESTITUTION_STEPS = [
+      { label: "Off",    value: 0   },
+      { label: "Normal", value: 0.8 },
+      { label: "High",   value: 1   },
+    ];
+    const LIGHT_STEPS = [
+      { label: "Normal",  value: 1  },
+      { label: "Bright",  value: 3  },
+      { label: "Intense", value: 10 },
+    ];
+
+    function findStepIndex(steps, value) {
+      const idx = steps.findIndex(s => s.value === value);
+      return idx >= 0 ? idx : 0;
+    }
+
+    // ── Mutable settings ──────────────────────────────────────────────────────
+    const diceSettings = {
+      themeColor:     "#002060",
+      scale:          8,
+      gravity:        10,
+      friction:       1,
+      restitution:    0.8,
+      lightIntensity: 1,
+    };
+
+    let settingsChanged = false;
+
+    // ── DiceBox factory & init ────────────────────────────────────────────────
+    function makeDiceBox() {
+      return new DiceBox({
+        container:      "#dice-box",
+        assetPath:      "assets/",
+        origin:         "https://unpkg.com/@3d-dice/dice-box@1.1.4/dist/",
+        theme:          "smooth",
+        externalThemes: {
+          smooth: location.origin + "/assets/themes/smooth/"  // ← añadir esto
+        },
+        themeColor:     diceSettings.themeColor,
+        delay:          200,
+        scale:          diceSettings.scale,
+        gravity:        diceSettings.gravity,
+        friction:       diceSettings.friction,
+        restitution:    diceSettings.restitution,
+        throwForce:     10,
+        spinForce:      5,
+        lightIntensity: diceSettings.lightIntensity,
+        startingHeight: 10,
+        settleTimeout:  5000,
+        onRollComplete: (results) => {
+          showResults(results, pendingMode, pendingModifier);
+        },
+      });
+    }
+
+    let diceBox = makeDiceBox();
+    let ready   = false;
+
+    diceBox.init().then(() => { ready = true; });
+
+    async function reinitDiceBox() {
+      ready = false;
+      try { diceBox.clear(); } catch (_) {}
+      document.getElementById("dice-box").innerHTML = "";
+      diceBox = makeDiceBox();
+      await diceBox.init();
+      ready           = true;
+      settingsChanged = false;
+    }
+
+    // ── Modal helpers ─────────────────────────────────────────────────────────
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+      if (settingsChanged) {
+        resultPanel.style.display  = "none";
+        emptyMessage.style.display = "block";
+        reinitDiceBox();
+      }
+    }
+
+    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+      overlay.addEventListener("click", e => {
+        if (e.target === overlay) closeModal(overlay.id);
+      });
+    });
+
+    document.querySelectorAll(".modal-close").forEach(btn => {
+      btn.addEventListener("click", () => closeModal(btn.dataset.modal));
+    });
+
+    document.getElementById("color-btn").addEventListener("click",   () => openModal("color-modal"));
+    document.getElementById("physics-btn").addEventListener("click", () => openModal("physics-modal"));
+
+    // ── Color picker ──────────────────────────────────────────────────────────
+    const colorPicker   = document.getElementById("color-picker");
+    const colorSwatch   = document.getElementById("color-swatch");
+    const colorHexLabel = document.getElementById("color-hex-label");
+
+    function applyColor(hex) {
+      diceSettings.themeColor            = hex;
+      colorPicker.value                  = hex;
+      colorSwatch.style.backgroundColor  = hex;
+      colorHexLabel.textContent          = hex;
+      settingsChanged                    = true;
+      document.querySelectorAll(".color-preset").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.color.toLowerCase() === hex.toLowerCase());
+      });
+    }
+
+    colorPicker.addEventListener("input", e => applyColor(e.target.value));
+
+    document.querySelectorAll(".color-preset").forEach(btn => {
+      btn.addEventListener("click", () => applyColor(btn.dataset.color));
+    });
+
+    // Seed UI with current color, then reset dirty flag
+    applyColor(diceSettings.themeColor);
+    settingsChanged = false;
+
+    // ── Slider fill helper ────────────────────────────────────────────────────
+    function updateSliderFill(slider) {
+      const pct = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+      slider.style.background =
+        `linear-gradient(to right, #2b2b2b 0%, #2b2b2b ${pct}%, #e8e0d4 ${pct}%, #e8e0d4 100%)`;
+    }
+
+    // ── Physics sliders ───────────────────────────────────────────────────────
+    function setupSlider(sliderId, valueLabelId, ticksId, steps, getter, setter) {
+      const slider         = document.getElementById(sliderId);
+      const valueLabel     = document.getElementById(valueLabelId);
+      const ticksContainer = document.getElementById(ticksId);
+
+      steps.forEach(step => {
+        const span       = document.createElement("span");
+        span.className   = "param-tick";
+        span.textContent = step.label;
+        ticksContainer.appendChild(span);
+      });
+
+      const idx      = findStepIndex(steps, getter());
+      slider.value   = idx;
+      valueLabel.textContent = steps[idx].label;
+      updateSliderFill(slider);
+
+      slider.addEventListener("input", e => {
+        const i = parseInt(e.target.value, 10);
+        valueLabel.textContent = steps[i].label;
+        setter(steps[i].value);
+        updateSliderFill(slider);
+        settingsChanged = true;
+      });
+    }
+
+    setupSlider("scale-slider",       "scale-value",       "scale-ticks",       SCALE_STEPS,
+      () => diceSettings.scale,          v => { diceSettings.scale          = v; });
+    setupSlider("gravity-slider",     "gravity-value",     "gravity-ticks",     GRAVITY_STEPS,
+      () => diceSettings.gravity,        v => { diceSettings.gravity        = v; });
+    setupSlider("friction-slider",    "friction-value",    "friction-ticks",    FRICTION_STEPS,
+      () => diceSettings.friction,       v => { diceSettings.friction       = v; });
+    setupSlider("restitution-slider", "restitution-value", "restitution-ticks", RESTITUTION_STEPS,
+      () => diceSettings.restitution,    v => { diceSettings.restitution    = v; });
+    setupSlider("light-slider",       "light-value",       "light-ticks",       LIGHT_STEPS,
+      () => diceSettings.lightIntensity, v => { diceSettings.lightIntensity = v; });
+
+    // ── Modifier ──────────────────────────────────────────────────────────────
+    const modValueEl      = document.getElementById("mod-value");
+    const modMinusBtn     = document.getElementById("mod-minus");
+    const modPlusBtn      = document.getElementById("mod-plus");
+    const advantageBtn    = document.getElementById("advantage-btn");
+    const disadvantageBtn = document.getElementById("disadvantage-btn");
+
+    modMinusBtn.addEventListener("click", () => {
+      modValueEl.textContent = parseInt(modValueEl.textContent, 10) - 1;
+    });
+    modPlusBtn.addEventListener("click", () => {
+      modValueEl.textContent = parseInt(modValueEl.textContent, 10) + 1;
+    });
+
+    function getModifier() {
+      return parseInt(modValueEl.textContent, 10);
+    }
+
+    // ── Dice helpers ──────────────────────────────────────────────────────────
+    function getCounts() {
+      const counts = {};
+      document.querySelectorAll(".die-selector[data-die]").forEach(sel => {
+        const die   = sel.getAttribute("data-die");
+        const count = parseInt(sel.querySelector(".die-count").textContent, 10);
+        if (count > 0) counts[die] = count;
+      });
+      return counts;
+    }
+
+    function buildNotation(counts) {
+      return Object.keys(counts).map(die => ({
+        qty:   counts[die],
+        sides: parseInt(die, 10),
+      }));
+    }
+
+    // ── Results ───────────────────────────────────────────────────────────────
+    function showResults(results, mode, modifier) {
+      let total = 0;
+      const groups = {};
+
+      results.forEach(group => {
+        group.rolls.forEach(die => {
+          const sides = die.sides;
+          if (!groups[sides]) groups[sides] = [];
+          groups[sides].push(die.value);
+        });
+      });
+
+      let detailParts;
+
+      if (mode === "advantage" || mode === "disadvantage") {
+        const values = groups[20] || [];
+        const chosen = mode === "advantage" ? Math.max(...values) : Math.min(...values);
+        total        = chosen + modifier;
+        const label  = mode === "advantage" ? "Advantage" : "Disadvantage";
+        detailParts  = [`${label} d20: ${values.join("/")} \u2192 ${chosen}`];
+      } else if (mode === "percentile") {
+        const d100Values = groups[100] || [];
+        const value      = d100Values[0] ?? 100;
+        total            = value;
+        const isHundred  = (total === 100);
+        const tensVal    = isHundred ? 0 : Math.floor(total / 10) * 10;
+        const unitsVal   = isHundred ? 0 : total % 10;
+        const tensDisplay = String(tensVal).padStart(2, "0");
+        detailParts      = [`Percentile: ${tensDisplay} + ${unitsVal}`];
+      } else {
+        Object.keys(groups).forEach(sides => {
+          groups[sides].forEach(value => { total += value; });
+        });
+        total      += modifier;
+        detailParts = Object.keys(groups)
+          .sort((a, b) => a - b)
+          .map(sides => `d${sides}: ${groups[sides].join(", ")}`);
+        if (modifier !== 0) {
+          const sign = modifier > 0 ? "+" : "";
+          detailParts.push(`Mod: ${sign}${modifier}`);
+        }
+      }
+
+      resultTotal.textContent  = `Total: ${total}`;
+      resultDetail.textContent = detailParts.join("   |   ");
+      resultPanel.style.display = "block";
+    }
+
+    // ── Roll ──────────────────────────────────────────────────────────────────
+    function doRoll(notation, mode) {
+      if (!ready) return;
+      pendingMode     = mode;
+      pendingModifier = getModifier();
+
+      emptyMessage.style.display = "none";
+      resultPanel.style.display  = "none";
+      diceBox.clear();
+      diceBox.roll(notation);
+    }
+
+    // ── Counter buttons ───────────────────────────────────────────────────────
+    document.querySelectorAll(".die-selector[data-die]").forEach(sel => {
+      const countEl  = sel.querySelector(".die-count");
+      const minusBtn = sel.querySelector(".minus");
+      const plusBtn  = sel.querySelector(".plus");
+
+      plusBtn.addEventListener("click", () => {
+        let val = parseInt(countEl.textContent, 10);
+        if (val < 10) val++;
+        countEl.textContent = val;
+      });
+      minusBtn.addEventListener("click", () => {
+        let val = parseInt(countEl.textContent, 10);
+        if (val > 0) val--;
+        countEl.textContent = val;
+      });
+    });
+
+    // ── Action buttons ────────────────────────────────────────────────────────
+    rollBtn.addEventListener("click", () => {
+      const counts   = getCounts();
+      const notation = buildNotation(counts);
+      if (notation.length === 0) return;
+      doRoll(notation, "normal");
+    });
+
+    advantageBtn.addEventListener("click", () => {
+      doRoll([{ qty: 2, sides: 20 }], "advantage");
+    });
+
+    disadvantageBtn.addEventListener("click", () => {
+      doRoll([{ qty: 2, sides: 20 }], "disadvantage");
+    });
+
+    d100Btn.addEventListener("click", () => {
+      doRoll([{ qty: 1, sides: 100 }], "percentile");
+    });
+
+    clearBtn.addEventListener("click", () => {
+      if (!ready) return;
+      diceBox.clear();
+      resultPanel.style.display  = "none";
+      emptyMessage.style.display = "block";
+      document.querySelectorAll(".die-count").forEach(el => { el.textContent = "0"; });
+      modValueEl.textContent = "0";
+    });
+  </script>
+</body>
+</html>
