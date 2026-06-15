@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>Tirador de Dados 3D</title>
+<title>3D&Dice Roller</title>
 <style>
   * {
     margin: 0;
@@ -586,6 +586,7 @@
         </div>
         <div id="color-presets">
           <button class="color-preset" style="background:#000000" data-color="#000000" title="Negro"></button>
+          <button class="color-preset" style="background:#bababa" data-color="#bababa" title="Gris"></button>
           <button class="color-preset" style="background:#ffffff" data-color="#ffffff" title="Blanco"></button>
           <button class="color-preset" style="background:#c00000" data-color="#c00000" title="Marrón"></button>
           <button class="color-preset" style="background:#ff0000" data-color="#ff0000" title="Rojo"></button>
@@ -726,10 +727,7 @@
         container:      "#dice-box",
         assetPath:      "assets/",
         origin:         "https://unpkg.com/@3d-dice/dice-box@1.1.4/dist/",
-        theme:          "smooth",
-        externalThemes: {
-          smooth: location.origin + "/assets/"
-        },
+        theme:          "default",
         themeColor:     diceSettings.themeColor,
         delay:          200,
         scale:          diceSettings.scale,
