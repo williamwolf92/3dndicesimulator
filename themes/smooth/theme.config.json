@@ -7,6 +7,7 @@
   "meshFile": "smoothDice.json",
   "material": {
     "type": "color",
+    "specularTexture": "specularity.jpg",
     "diffuseTexture": {
       "light": "diffuse-light.png",
       "dark": "diffuse-dark.png"
