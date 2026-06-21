@@ -27,7 +27,7 @@ A physics-based 3D dice roller built for **Dungeons & Dragons 5e**, running enti
 ### Physics & Appearance
 - **Physics panel ⚙️** — tweak dice size (Small / Medium / Large), gravity, friction, bounce, light intensity, and shadows
 - **Color panel 🎨** — pick any custom color via hex input, or choose from 14 preset swatches
-- Multiple custom 3D themes (smooth, onyx, ruby, amethyst, emerald, amber, sapphire, multicolor)
+- Multiple custom 3D themes (smooth, onyx, ruby, amethyst, emerald, amber, sapphire, multicolor) (themes are not implmemented yet) 
 - Wood-texture tabletop background
 
 ### Persistence
