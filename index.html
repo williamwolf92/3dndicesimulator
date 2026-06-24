@@ -665,18 +665,69 @@
 
   /* ── Skills modal ────────────────────────────────────── */
   .skills-section {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
 
   .skills-section:last-child {
     margin-bottom: 0;
   }
 
+  .skills-section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .skills-section-title {
     font-size: 15px;
     font-weight: 700;
     color: #5c3d1e;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+  }
+
+  .prof-bonus-control {
+    display: flex;
+    border: 1px dashed #2b2b2b;
+    border-radius: 5px;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 5px;
+    margin-bottom: 5px;
+  }
+
+  .prof-bonus-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #5c3d1e;
+  }
+
+  #prof-bonus-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2b2b2b;
+    min-width: 22px;
+    text-align: center;
+  }
+
+  .prof-bonus-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background-color: #2b2b2b;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .prof-bonus-btn:active {
+    background-color: #555555;
   }
 
   /* Habilidades */
@@ -693,7 +744,7 @@
     background-color: #ffffff;
     border: 1px solid #e6ddcf;
     border-radius: 10px;
-    padding: 8px 1px 7px;
+    padding: 7px 1px;
   }
 
   .ability-label {
@@ -755,7 +806,7 @@
     background-color: #ffffff;
     border: 1px solid #e6ddcf;
     border-radius: 10px;
-    padding: 8px 2px;
+    padding: 7px;
     gap: 6px;
   }
 
@@ -790,7 +841,7 @@
   /* Skills */
   .skills-columns {
     display: flex;
-    gap: 14px;
+    gap: 10px;
   }
 
   .skills-column {
@@ -799,7 +850,7 @@
   }
 
   .skill-group {
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
 
   .skill-group:last-child {
@@ -810,14 +861,14 @@
     font-size: 12px;
     font-weight: 700;
     color: #7a6e62;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
   .skill-row {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
   .skill-row:last-child {
@@ -851,7 +902,7 @@
   }
 
   .skill-name {
-    font-size: 12px;
+    font-size: 13px;
     color: #2b2b2b;
   }
 
@@ -991,7 +1042,6 @@
     font-size: 14px;
     font-weight: 700;
     color: #3a3a3a;
-    flex: 1;
   }
 
   #cr-add-btn {
@@ -1032,7 +1082,7 @@
     background-color: #ffffff;
     border: 1px solid #e6ddcf;
     border-radius: 10px;
-    padding: 10px 10px;
+    padding: 5px 10px;
   }
 
   .cr-info {
@@ -1061,13 +1111,13 @@
   }
 
   .cr-launch-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     border: none;
     background-color: #2b2b2b;
     color: #ffffff;
-    font-size: 18px;
+    font-size: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1080,13 +1130,13 @@
   }
 
   .cr-delete-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     border: none;
     background-color: #b10000;
     color: #ffffff;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -1122,7 +1172,7 @@
     "name": "williamwolf92",
     "url": "https://github.com/williamwolf92"
   },
-  "image": "https://williamwolf92.github.io/3dndiceroller/assets/og-preview.png"
+  "image": "https://williamwolf92.github.io/3dndiceroller/assets/icon.png"
 }
 </script>
 </head>
@@ -1153,6 +1203,7 @@
         <button class="float-btn" id="color-btn" title="Dice Color">🎨</button>
         <button class="float-btn" id="skills-btn" title="Skills">⭐️</button>
         <button class="float-btn" id="savedrolls-btn" title="Saved Rolls">🎲</button>
+        <button class="float-btn" id="reroll-btn" title="Re-roll">🔄</button>
         <button class="float-btn" id="physics-btn" title="Physics">⚙️</button>
         <button class="float-btn" id="info-btn" title="Information">ℹ️</button>
       </div>
@@ -1361,7 +1412,15 @@
 
         <!-- Sección 1: Habilidades -->
         <div class="skills-section">
-          <div class="skills-section-title">Abilities</div>
+          <div class="skills-section-title-row">
+            <span class="skills-section-title">Abilities</span>
+            <div class="prof-bonus-control">
+              <span class="prof-bonus-label">Prof. Bonus:</span>
+              <button class="prof-bonus-btn" id="prof-bonus-minus">-</button>
+              <span id="prof-bonus-value">+2</span>
+              <button class="prof-bonus-btn" id="prof-bonus-plus">+</button>
+            </div>
+          </div>
           <div class="ability-grid">
             <div class="ability-card" data-ability="STR">
               <div class="ability-label">STR</div>
@@ -1635,7 +1694,7 @@
               <div class="cr-die-label">d4</div>
               <div class="cr-die-count">0</div>
               <div class="cr-die-counter">
-                <button class="cr-counter-btn cr-minus">−</button>
+                <button class="cr-counter-btn cr-minus">-</button>
                 <button class="cr-counter-btn cr-plus">+</button>
               </div>
             </div>
@@ -1643,7 +1702,7 @@
               <div class="cr-die-label">d6</div>
               <div class="cr-die-count">0</div>
               <div class="cr-die-counter">
-                <button class="cr-counter-btn cr-minus">−</button>
+                <button class="cr-counter-btn cr-minus">-</button>
                 <button class="cr-counter-btn cr-plus">+</button>
               </div>
             </div>
@@ -1651,7 +1710,7 @@
               <div class="cr-die-label">d8</div>
               <div class="cr-die-count">0</div>
               <div class="cr-die-counter">
-                <button class="cr-counter-btn cr-minus">−</button>
+                <button class="cr-counter-btn cr-minus">-</button>
                 <button class="cr-counter-btn cr-plus">+</button>
               </div>
             </div>
@@ -1659,7 +1718,7 @@
               <div class="cr-die-label">d10</div>
               <div class="cr-die-count">0</div>
               <div class="cr-die-counter">
-                <button class="cr-counter-btn cr-minus">−</button>
+                <button class="cr-counter-btn cr-minus">-</button>
                 <button class="cr-counter-btn cr-plus">+</button>
               </div>
             </div>
@@ -1667,7 +1726,7 @@
               <div class="cr-die-label">d12</div>
               <div class="cr-die-count">0</div>
               <div class="cr-die-counter">
-                <button class="cr-counter-btn cr-minus">−</button>
+                <button class="cr-counter-btn cr-minus">-</button>
                 <button class="cr-counter-btn cr-plus">+</button>
               </div>
             </div>
@@ -1675,14 +1734,14 @@
               <div class="cr-die-label">d20</div>
               <div class="cr-die-count">0</div>
               <div class="cr-die-counter">
-                <button class="cr-counter-btn cr-minus">−</button>
+                <button class="cr-counter-btn cr-minus">-</button>
                 <button class="cr-counter-btn cr-plus">+</button>
               </div>
             </div>
           </div>
           <div id="cr-mod-row">
             <span id="cr-mod-label">Modifier</span>
-            <button class="cr-counter-btn" id="cr-mod-minus">−</button>
+            <button class="cr-counter-btn" id="cr-mod-minus">-</button>
             <div class="cr-die-count" id="cr-mod-value">0</div>
             <button class="cr-counter-btn" id="cr-mod-plus">+</button>
           </div>
@@ -1759,6 +1818,7 @@
         abilityScores,
         saveProficient,
         skillProficiency,
+        profBonus,
         customRolls,
         counts,
         modifier: parseInt(document.getElementById("mod-value").textContent, 10),
@@ -2029,6 +2089,11 @@
     const abilityScores = Object.assign({ STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }, savedState.abilityScores || {});
     const saveProficient = Object.assign({ STR: false, DEX: false, CON: false, INT: false, WIS: false, CHA: false }, savedState.saveProficient || {});
 
+    const PROF_BONUS_VALUES = [2, 3, 4, 5, 6];
+    let profBonus = (savedState.profBonus != null && PROF_BONUS_VALUES.includes(savedState.profBonus))
+      ? savedState.profBonus
+      : 2;
+
     const SKILLS = [
       { id: "athletics",     name: "Athletics",       ability: "STR" },
       { id: "acrobatics",    name: "Acrobatics",      ability: "DEX" },
@@ -2070,13 +2135,13 @@
     }
 
     function renderSave(ability) {
-      const mod = getAbilityMod(ability) + (saveProficient[ability] ? 3 : 0);
+      const mod = getAbilityMod(ability) + (saveProficient[ability] ? profBonus : 0);
       document.getElementById(`save-mod-${ability}`).textContent = formatMod(mod);
     }
 
     function renderSkill(skillId) {
       const skill = SKILLS.find(s => s.id === skillId);
-      const bonus = skillProficiency[skillId] === "P" ? 3 : skillProficiency[skillId] === "E" ? 6 : 0;
+      const bonus = skillProficiency[skillId] === "P" ? profBonus : skillProficiency[skillId] === "E" ? profBonus * 2 : 0;
       const mod   = getAbilityMod(skill.ability) + bonus;
       document.getElementById(`skill-mod-${skillId}`).textContent = formatMod(mod);
     }
@@ -2094,6 +2159,38 @@
     // Initial render
     ABILITIES.forEach(renderAbility);
     SKILLS.forEach(s => updateSkillToggleUI(s.id));
+
+    // Prof. Bonus control
+    function renderProfBonus() {
+      document.getElementById("prof-bonus-value").textContent = `+${profBonus}`;
+    }
+
+    function refreshAllBonuses() {
+      ABILITIES.forEach(a => renderSave(a));
+      SKILLS.forEach(s => renderSkill(s.id));
+    }
+
+    renderProfBonus();
+
+    document.getElementById("prof-bonus-minus").addEventListener("click", () => {
+      const idx = PROF_BONUS_VALUES.indexOf(profBonus);
+      if (idx > 0) {
+        profBonus = PROF_BONUS_VALUES[idx - 1];
+        renderProfBonus();
+        refreshAllBonuses();
+        saveState();
+      }
+    });
+
+    document.getElementById("prof-bonus-plus").addEventListener("click", () => {
+      const idx = PROF_BONUS_VALUES.indexOf(profBonus);
+      if (idx < PROF_BONUS_VALUES.length - 1) {
+        profBonus = PROF_BONUS_VALUES[idx + 1];
+        renderProfBonus();
+        refreshAllBonuses();
+        saveState();
+      }
+    });
 
     // Ability +/- buttons
     document.querySelectorAll(".ability-minus").forEach(btn => {
@@ -2133,7 +2230,7 @@
     document.querySelectorAll(".save-roll-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const ability = btn.dataset.ability;
-        const mod     = getAbilityMod(ability) + (saveProficient[ability] ? 3 : 0);
+        const mod     = getAbilityMod(ability) + (saveProficient[ability] ? profBonus : 0);
         closeModal("skills-modal");
         rollWithLabel(`Saving Throw (${ability})`, mod);
       });
@@ -2157,7 +2254,7 @@
       btn.addEventListener("click", () => {
         const skillId = btn.closest(".skill-row").dataset.skill;
         const skill   = SKILLS.find(s => s.id === skillId);
-        const bonus   = skillProficiency[skillId] === "P" ? 3 : skillProficiency[skillId] === "E" ? 6 : 0;
+        const bonus   = skillProficiency[skillId] === "P" ? profBonus : skillProficiency[skillId] === "E" ? profBonus * 2 : 0;
         const mod     = getAbilityMod(skill.ability) + bonus;
         closeModal("skills-modal");
         rollWithLabel(`${skill.name}`, mod);

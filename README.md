@@ -16,6 +16,7 @@ A physics-based 3D dice roller built for **Dungeons & Dragons 5e**, running enti
 
 ### Character Sheet (Skills Panel ⭐)
 - **6 Ability Scores** — STR, DEX, CON, INT, WIS, CHA — with modifier auto-calculation
+- **Proficiency Bonus** — Set your PB and it will added automatically to your savings throws and your skills proficiencies
 - **Saving Throws** — roll any save directly; mark proficiency per ability
 - **18 D&D 5e Skills** — grouped by ability, with one-tap rolls; toggle **Proficiency** or **Expertise** per skill (modifier auto-applied)
 
