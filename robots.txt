@@ -1,8 +1,8 @@
 # robots.txt — 3D&Dice Roller
-# https://williamwolf92.github.io/3dndiceroller/
+# https://williamwolf92.github.io/dnd5e-dice-roller/
 
 User-agent: *
 Allow: /
 
 # Primary sitemap
-Sitemap: https://williamwolf92.github.io/3dndiceroller/sitemap.xml
+Sitemap: https://williamwolf92.github.io/dnd5e-dice-roller/sitemap.xml
