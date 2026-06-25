@@ -3,14 +3,14 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <!--
-    Sitemap for 3D&Dice Roller
-    https://williamwolf92.github.io/3dndiceroller/
+    Sitemap for D&D 5e Dice Roller
+    https://williamwolf92.github.io/dnd5e-dice-roller/
     Update <lastmod> whenever you deploy meaningful changes.
   -->
 
   <url>
-    <loc>https://williamwolf92.github.io/3dndiceroller/</loc>
-    <lastmod>2026-06-22</lastmod>
+    <loc>https://williamwolf92.github.io/dnd5e-dice-roller/</loc>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
