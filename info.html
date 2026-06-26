@@ -17,7 +17,7 @@
     background-color: #faf6ef;
     color: #2b2b2b;
     font-size: 14px;
-    line-height: 1.65;
+    line-height: 1.5;
     padding: 18px 16px 36px;
   }
 
@@ -101,7 +101,7 @@
   .param-table td:first-child {
     font-weight: 700;
     color: #5c3d1e;
-    width: 38%;
+    width: 25%;
     white-space: nowrap;
   }
 
@@ -121,7 +121,6 @@
     font-size: 13px;
     font-weight: 700;
     color: #7a6e62;
-    text-transform: uppercase;
     margin-bottom: 6px;
   }
 
@@ -189,7 +188,7 @@
 <body>
 
   <h1>🎲 D&amp;D 5e Dice Roller</h1>
-  <p class="subtitle">A 3D dice simulator for Dungeons &amp; Dragons tabletop RPGs</p>
+  <p class="subtitle">A realistic 3D dice simulator for Dungeons &amp; Dragons tabletop RPGs</p>
 
   <!-- ── Basic Rolling ─────────────────────────────────────── -->
   <h2>Basic Dice Rolling</h2>
@@ -220,7 +219,7 @@
     <li><span style="color:#b10000;font-weight:700">Nat. 1</span> – automatic failure.</li>
     <li><span style="color:#007f27;font-weight:700">Nat. 20</span> – critical or automatic success.</li>
   </ul>
-  <p>The toast dismisses automatically after 3 seconds.</p>
+  <p>The toast dismisses automatically after a few seconds.</p>
 
   <!-- ── Skills ─────────────────────────────────────────────── -->
   <h2>Skills &amp; Proficiencies ⭐️</h2>
@@ -257,12 +256,12 @@
   <h2>Physics Settings ⚙️</h2>
   <p>Tap <strong>⚙️</strong> to adjust the physics simulation. Each card cycles through its options on tap:</p>
   <table class="param-table">
-    <tr><td>📏 Size</td><td>Small / Medium / Large — changes the physical scale of every die.</td></tr>
-    <tr><td>🌑 Gravity</td><td>Zero / Soft / Normal — how fast the dice fall to the surface.</td></tr>
-    <tr><td>🥌 Friction</td><td>Off / On — controls how much the surface grips the dice.</td></tr>
-    <tr><td>🏀 Bounce</td><td>Off / Normal / High — controls how energetically the dice rebound.</td></tr>
-    <tr><td>💡 Light</td><td>Dim / Bright / Intense — ambient light intensity in the scene.</td></tr>
-    <tr><td>🔲 Shadow</td><td>Off / On — toggles cast shadows on the surface.</td></tr>
+    <tr><td>📏 Size</td><td><strong>Small | Medium | Large</strong> — changes the physical scale of every die.</td></tr>
+    <tr><td>🌑 Gravity</td><td><strong>Zero | Soft | Normal</strong> — how fast the dice fall to the surface.</td></tr>
+    <tr><td>🥌 Friction</td><td><strong>Off | On</strong> — controls how much the surface grips the dice.</td></tr>
+    <tr><td>🏀 Bounce</td><td><strong>Off | Normal | High</strong> — controls how energetically the dice rebound.</td></tr>
+    <tr><td>💡 Light</td><td><strong>Dim | Bright | Intense</strong> — ambient light intensity in the scene.</td></tr>
+    <tr><td>🔲 Shadow</td><td><strong>Off | On</strong> — toggles cast shadows on the surface.</td></tr>
   </table>
   <div class="info-note">Physics changes take effect when you close the panel. The dice engine restarts automatically.</div>
 
@@ -274,11 +273,11 @@
   <h2>Credits</h2>
   <div class="credits-box">
 
-    <div class="credits-section-title">Rendering Engine</div>
+    <div class="credits-section-title">RENDERING ENGINE</div>
     <p>The 3D dice rendering and physics simulation are powered by <strong>@3d-dice/dice-box</strong>, an open-source WebGL dice library built on top of Babylon.js and Cannon-es.</p>
     <p>
-      Created by <strong>Frank Meeuwissen</strong> ·
-      <a href="https://github.com/3d-dice/dice-box" target="_blank">github.com/3d-dice/dice-box</a> ·
+      Created by <strong>Frank Meeuwissen:</strong><br> •
+      <a href="https://github.com/3d-dice/dice-box" target="_blank">github.com/3d-dice/dice-box</a><br> •
       <a href="https://fantasticdice.games/" target="_blank">fantasticdice.games</a>
     </p>
     <p style="margin-top:4px; font-size: 12px; color: #7a6e62;">
@@ -287,11 +286,10 @@
 
     <hr class="credits-divider">
 
-    <div class="credits-section-title">Application</div>
+    <div class="credits-section-title">APPLICATION v1.7</div>
     <p><strong>D&amp;D 5e Dice Roller</strong> is a free, open-source D&amp;D companion webapp.</p>
-    <p>
-      Made with ❤️ by <a href="https://github.com/williamwolf92/" target="_blank"><strong>williamwolf92</strong></a>
-    </p>
+    <p>Made with ❤️ by <a href="https://github.com/williamwolf92/" target="_blank"><strong>williamwolf92</strong></a></p>
+    <a href="mailto:lamorrongadepapo@gmail.com?subject=DnD 5e Dice Roller feedback">📧 Send Feedback</a>
   </div>
 </body>
 </html>
