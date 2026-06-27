@@ -260,7 +260,16 @@
     flex-shrink: 0;
     background-color: #ffffff;
     border-top: 1px solid #e6ddcf;
-    padding: 12px 14px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    padding: 10px 10px calc(env(safe-area-inset-bottom, 0px) + 10px);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  #control-content {
+    flex: 1;
+    min-width: 0;
   }
 
   #dice-selectors {
@@ -386,27 +395,26 @@
 
   /* ── Floating config buttons ─────────────────────────── */
   #float-buttons {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .float-btn {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     border: 1.5px solid #3a3a3a;
-    background-color: rgba(255, 255, 255, 0.88);
-    box-shadow: 0 5px 5px rgba(0,0,0,0.7);
-    font-size: 18px;
+    background-color: #faf6ef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     touch-action: manipulation;
+    flex-shrink: 0;
   }
 
   .float-btn:active {
@@ -1201,19 +1209,10 @@
           <button class="rtp-btn" id="rtp-disadvantage">Disadv.</button>
         </div>
       </div>
-
-      <!-- Floating config buttons -->
-      <div id="float-buttons">
-        <button class="float-btn" id="color-btn" title="Dice Color">🎨</button>
-        <button class="float-btn" id="skills-btn" title="Skills">⭐️</button>
-        <button class="float-btn" id="savedrolls-btn" title="Saved Rolls">🎲</button>
-        <button class="float-btn" id="reroll-btn" title="Re-roll">🔄</button>
-        <button class="float-btn" id="physics-btn" title="Physics">⚙️</button>
-        <button class="float-btn" id="info-btn" title="Information">ℹ️</button>
-      </div>
     </div>
 
     <div id="control-panel">
+      <div id="control-content">
       <div id="dice-selectors">
         <div class="die-selector" data-die="4">
           <div class="die-label">d4</div>
@@ -1282,6 +1281,17 @@
         <button id="clear-btn" class="action-btn">Clear</button>
         <button id="roll-btn" class="action-btn">Roll</button>
         <button id="d100-btn" class="action-btn">d100</button>
+      </div>
+      </div><!-- /#control-content -->
+
+      <!-- Floating config buttons -->
+      <div id="float-buttons">
+        <button class="float-btn" id="color-btn" title="Dice Color">🎨</button>
+        <button class="float-btn" id="skills-btn" title="Skills">⭐️</button>
+        <button class="float-btn" id="savedrolls-btn" title="Saved Rolls">🎲</button>
+        <button class="float-btn" id="reroll-btn" title="Re-roll">🔄</button>
+        <button class="float-btn" id="physics-btn" title="Physics">⚙️</button>
+        <button class="float-btn" id="info-btn" title="Information">ℹ️</button>
       </div>
     </div>
   </div>
