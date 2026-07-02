@@ -105,7 +105,7 @@
     z-index: 5;
     pointer-events: none;
     width: max-content;
-    max-width: 70%;
+    max-width: 90%;
     opacity: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
   }
@@ -837,7 +837,7 @@
     color: #2b2b2b;
     font-size: 16px;
     font-weight: 700;
-    padding: 6px 0;
+    padding: 3px 0;
     touch-action: manipulation;
   }
 
@@ -2729,6 +2729,13 @@
       renderCustomRolls();
       saveState();
     });
+    
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/dnd5e-dice-roller/sw.js")
+          .catch((err) => console.warn("SW registration failed:", err));
+    });
+  }
   </script>
 </body>
 </html>
